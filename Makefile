@@ -1,6 +1,6 @@
 export DOCKER_ORG ?= unionpos
 export DOCKER_IMAGE ?= $(DOCKER_ORG)/couchbase-enterprise-server
-export DOCKER_TAG ?= 6.0.2
+export DOCKER_TAG ?= 6.5.0
 export DOCKER_IMAGE_NAME ?= $(DOCKER_IMAGE):$(DOCKER_TAG)
 export DOCKER_BUILD_FLAGS =
 
