@@ -13,8 +13,12 @@ build: docker/build
 docs: readme/deps readme
 .PHONY: docs
 
+push:
+	$(DOCKER) push $(DOCKER_IMAGE_NAME)
+.PHONY: push
+
 run:
-	docker container run --rm \
+	$(DOCKER) container run --rm \
 		--publish "8091-8096:8091-8096" \
 		--publish "18091-18096:18091-18096" \
 		--publish "11207:11207" \
@@ -23,5 +27,5 @@ run:
 .PHONY: run
 
 it:
-	docker run -it ${DOCKER_IMAGE_NAME} /bin/bash
+	$(DOCKER) run -it ${DOCKER_IMAGE_NAME} /bin/bash
 .PHONY: it
