@@ -18,10 +18,10 @@ RUN apt-get update && \
   apt-get autoremove && \
   rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
-ARG CB_VERSION=6.5.0
-ARG CB_RELEASE_URL=https://packages.couchbase.com/releases
-ARG CB_PACKAGE=couchbase-server-enterprise_6.5.0-ubuntu16.04_amd64.deb
-ARG CB_SHA256=5505c6bb026090dae7351e9d83caeab00437f19e48e826afd4cb6bafc484cd2b
+ARG CB_VERSION="6.5.0"
+ARG CB_RELEASE_URL="https://packages.couchbase.com/releases"
+ARG CB_PACKAGE="couchbase-server-enterprise_${CB_VERSION}-ubuntu16.04_amd64.deb"
+ARG CB_SHA256="712aeeeed364d5364c55fb8f21b65bd1610f067a4cb4c851c4b69df4689c3f1d"
 
 ENV PATH=$PATH:/opt/couchbase/bit:/opt/couchbase/bin/tools:/opt/couchbase/bin/install
 
