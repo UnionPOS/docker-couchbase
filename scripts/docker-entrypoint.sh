@@ -2,7 +2,7 @@
 set -e
 
 # shellcheck disable=SC1091
-source "/usr/local/lib/bashui.sh"
+source "/usr/local/bashlib/bashui.sh"
 
 staticConfigFile=/opt/couchbase/etc/couchbase/static_config
 restPortValue=8091

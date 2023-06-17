@@ -1,4 +1,4 @@
-FROM unionpos/ubuntu:16.04
+FROM ubuntu:18.04
 
 # Install dependencies:
 #  runit: for container process management
@@ -13,15 +13,20 @@ FROM unionpos/ubuntu:16.04
 #  net-tools: ifconfig, arp, netstat
 #  numactl: numactl
 RUN apt-get update && \
-  apt-get install -yq runit wget python-httplib2 chrpath tzdata \
+  apt-get install -yq curl runit wget python-httplib2 chrpath tzdata \
   lsof lshw sysstat net-tools numactl zip unzip && \
   apt-get autoremove && \
   rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
-ARG CB_VERSION="6.5.0"
+ARG CB_VERSION="7.0.2"
 ARG CB_RELEASE_URL="https://packages.couchbase.com/releases"
-ARG CB_PACKAGE="couchbase-server-enterprise_${CB_VERSION}-ubuntu16.04_amd64.deb"
-ARG CB_SHA256="712aeeeed364d5364c55fb8f21b65bd1610f067a4cb4c851c4b69df4689c3f1d"
+ARG CB_PACKAGE="couchbase-server-enterprise_${CB_VERSION}-ubuntu18.04_amd64.deb"
+
+# this checksum is for 6.5.0
+#ARG CB_SHA256="712aeeeed364d5364c55fb8f21b65bd1610f067a4cb4c851c4b69df4689c3f1d"
+
+# this checksum is for 7.0.2
+ARG CB_SHA256="12357b7d0fe63da5785194633164ede10cb00ca9d2ee98e144e3d120a5b0587d"
 
 ENV PATH=$PATH:/opt/couchbase/bit:/opt/couchbase/bin/tools:/opt/couchbase/bin/install
 
@@ -34,6 +39,13 @@ RUN export INSTALL_DONT_START_SERVER=1 && \
   wget -N $CB_RELEASE_URL/$CB_VERSION/$CB_PACKAGE && \
   echo "$CB_SHA256  $CB_PACKAGE" | sha256sum -c - && \
   dpkg -i ./$CB_PACKAGE && rm -f ./$CB_PACKAGE
+
+# http://smarden.org/runit/useinit.html#sysv - at some point the script
+# runsvdir-start was moved/renamed to this odd name, so we put it back
+# somewhere sensible. This appears to be necessary for Ubuntu > 16.04
+RUN if [ ! -x /usr/sbin/runsvdir-start ]; then \
+        cp -a /etc/runit/2 /usr/sbin/runsvdir-start; \
+    fi
 
 # Add runit script for couchbase-server
 COPY scripts/run /etc/service/couchbase-server/run
