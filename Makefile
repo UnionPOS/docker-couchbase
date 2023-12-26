@@ -18,7 +18,7 @@ push:
 .PHONY: push
 
 run:
-	$(DOCKER) container run --rm --platform linux/amd64 \
+	$(DOCKER) container run --rm ${DOCKER_BUILD_FLAGS} \
 		--publish "8091-8096:8091-8096" \
 		--publish "18091-18096:18091-18096" \
 		--publish "11207:11207" \
@@ -27,5 +27,5 @@ run:
 .PHONY: run
 
 it:
-	$(DOCKER) run -it --platform linux/amd64 ${DOCKER_IMAGE_NAME} /bin/bash
+	$(DOCKER) run -it ${DOCKER_BUILD_FLAGS} ${DOCKER_IMAGE_NAME} /bin/bash
 .PHONY: it
