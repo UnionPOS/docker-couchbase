@@ -1,8 +1,8 @@
 export DOCKER_ORG ?= unionpos
 export DOCKER_IMAGE ?= $(DOCKER_ORG)/couchbase-enterprise-server
-export DOCKER_TAG ?= 6.5.0
+export DOCKER_TAG ?= 7.0.2
 export DOCKER_IMAGE_NAME ?= $(DOCKER_IMAGE):$(DOCKER_TAG)
-export DOCKER_BUILD_FLAGS =
+export DOCKER_BUILD_FLAGS = --platform linux/amd64
 
 -include $(shell curl -sSL -o .build-harness "https://raw.githubusercontent.com/unionpos/build-harness/master/templates/Makefile.build-harness"; echo .build-harness)
 
@@ -18,7 +18,7 @@ push:
 .PHONY: push
 
 run:
-	$(DOCKER) container run --rm \
+	$(DOCKER) container run --rm ${DOCKER_BUILD_FLAGS} \
 		--publish "8091-8096:8091-8096" \
 		--publish "18091-18096:18091-18096" \
 		--publish "11207:11207" \
@@ -27,5 +27,5 @@ run:
 .PHONY: run
 
 it:
-	$(DOCKER) run -it ${DOCKER_IMAGE_NAME} /bin/bash
+	$(DOCKER) run -it ${DOCKER_BUILD_FLAGS} ${DOCKER_IMAGE_NAME} /bin/bash
 .PHONY: it
