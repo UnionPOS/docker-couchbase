@@ -15,6 +15,10 @@
 
 Dockerfile for Couchbase
 
+This now creates a container that extends a Couchbase maintained container. It extends 7.1.6.
+7.1.0 is the first official container from Couchbase that is multi platform.  The image uploaded to docker hub is arm64.  If we have a need for amd64 it should be possible by just rebuilding this contianer on an intel mac.
+
+
 ## Quick Start
 
 
