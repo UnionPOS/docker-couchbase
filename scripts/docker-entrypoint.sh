@@ -1,46 +1,7 @@
 #!/bin/bash
 set -e
 
-# shellcheck disable=SC1091
-source "/usr/local/bashlib/bashui.sh"
-
-staticConfigFile=/opt/couchbase/etc/couchbase/static_config
-restPortValue=8091
-
-# see https://developer.couchbase.com/documentation/server/current/install/install-ports.html
-function overridePort() {
-    portName=$1
-    portNameUpper=$(echo $portName | awk '{print toupper($0)}')
-    portValue=${!portNameUpper}
-
-    # only override port if value available AND not already contained in static_config
-    if [ "$portValue" != "" ]; then
-        if grep -Fq "{${portName}," ${staticConfigFile}
-        then
-            echo "Don't override port ${portName} because already available in $staticConfigFile"
-        else
-            echo "Override port '$portName' with value '$portValue'"
-            echo "{$portName, $portValue}." >> ${staticConfigFile}
-
-            if [ ${portName} == "rest_port" ]; then
-                restPortValue=${portValue}
-            fi
-        fi
-    fi
-}
-
-overridePort "rest_port"
-overridePort "mccouch_port"
-overridePort "memcached_port"
-overridePort "query_port"
-overridePort "ssl_query_port"
-overridePort "fts_http_port"
-overridePort "moxi_port"
-overridePort "ssl_rest_port"
-overridePort "ssl_capi_port"
-overridePort "ssl_proxy_downstream_port"
-overridePort "ssl_proxy_upstream_port"
-
+echo "Starting docker-entrypoint.sh with parameters: $@"
 
 [[ "$1" == "couchbase-server" ]] && {
 
@@ -56,7 +17,7 @@ overridePort "ssl_proxy_upstream_port"
     fi
 
     if [ "$(ls -A /docker-entrypoint-initdb.d)" ]; then
-        bot "Starting Couchbase Server -- "
+        echo "Starting Couchbase Server in seed mode -- "
         exec /usr/sbin/runsvdir-start &
         sleep 15
         for f in /docker-entrypoint-initdb.d/*; do
@@ -71,8 +32,8 @@ overridePort "ssl_proxy_upstream_port"
             echo
         done
     else
-        bot "Starting Couchbase Server -- "
-        echo "Web UI available at http://<ip>:$restPortValue"
+        echo "Starting Couchbase Server in regular mode -- "
+        echo "Web UI available at http://<ip>:8091"
         echo "and logs available in /opt/couchbase/var/lib/couchbase/logs"
         exec /usr/sbin/runsvdir-start
     fi
@@ -80,7 +41,7 @@ overridePort "ssl_proxy_upstream_port"
 
 # if seed only do not start process
 if [ ! -z "$SEED_ONLY" ]; then
-	bot "Couchbase seed process done."
+	echo "Couchbase seed process done."
 else
 	exec "$@"
 fi
